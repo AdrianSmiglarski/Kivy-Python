@@ -1,0 +1,217 @@
+<LoginScreen>:
+    username: username
+    password: password
+    host: host
+    prompt:prompt
+
+    GridLayout:
+        cols:1
+        Label:
+            size_hint_y: None
+            height: root.height*0.3
+            bold: True
+            text: "Login Screen"
+        GridLayout:
+            cols:2
+            spacing: 0,20
+            Label:
+                size_hint: None, None
+                height: root.height*0.05
+                width: root.width*0.5
+                bold: True
+                text: "Username: "
+
+            TextInput:
+                size_hint: None, None
+                height: root.height*0.05
+                width: root.width*0.4
+                halign: 'center'
+                valign: 'center'
+                id: username
+                multiline:False
+
+            Label:
+                size_hint: None, None
+                height: root.height*0.05
+                width: root.width*0.5
+                bold: True
+                text: "Password: "
+
+            TextInput:
+                size_hint: None, None
+                height: root.height*0.05
+                width: root.width*0.4
+                halign: 'center'
+                valign: 'center'
+                id: password
+                multiline:False
+                password:True
+
+            Label:
+                size_hint: None, None
+                height: root.height*0.05
+                width: root.width*0.5
+                bold: True
+                text: "Server IP:"
+
+            TextInput:
+                size_hint: None, None
+                height: root.height*0.05
+                width: root.width*0.4
+                halign: 'center'
+                valign: 'center'
+                id: host
+                multiline:False
+
+        Label:
+            size_hint_y: None
+            height: root.height*0.15
+            id:prompt
+            text:""
+        Button:
+            size_hint_y: None
+            height: root.height*0.1
+            text:"Login"
+            on_press: root.connect()
+<MainMenu>:
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text:"Shop list"
+            on_press: root.to_shops()
+        Button:
+            text: "Produkty"
+            on_press: root.to_products()
+<SelectableLabel>:
+    # Draw a background to indicate selection
+    canvas.before:
+        Color:
+            rgba: (.2, 0.2, .3, 1) if self.selected else (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<ShopsScreen>:
+    rv: rv
+    GridLayout:
+        cols:1
+        halign: 'center'
+        Button:
+            size_hint_y: None
+            height: root.height*0.1
+            bold: True
+            text: "Punkty Sprzedazy"
+            on_press: root.load_data()
+        Label:
+            size_hint_y: None
+            height: root.height*0.1
+            text: ''
+        RecycleView:
+            id:rv
+            viewclass: 'SelectableLabel'
+            SelectableRecycleBoxLayout:
+                default_size: None, dp(56)
+                default_size_hint: 1, None
+                size_hint_y: None
+                height: self.minimum_height
+                orientation: 'vertical'
+                multiselect: False
+                touch_multiselect: False
+        Button:
+            size_hint_y: None
+            height: root.height*0.1
+            text:"Back"
+            on_press: root.manager.current= 'menu'
+
+<MessageBox>:
+    title: app.root.get_screen('products').rv.rv_layout.info[1]
+    size_hint: None, None
+    width: app.root.width
+    height: app.root.height
+    BoxLayout:
+        orientation: 'vertical'
+        size: root.size
+        GridLayout:
+            cols: 2
+            Label:
+                text: app.root.get_screen('products').rv.rv_layout.info[3]
+            AsyncImage:
+                source: app.root.get_screen('products').rv.rv_layout.info[4]
+            Label:
+                size_hint_y: None
+                height: root.height*0.1
+                text: root.check_quantity()
+            Label:
+                size_hint_y: None
+                height: root.height*0.1
+                bold: True
+                text:'Cena: ' + str(app.root.get_screen('products').rv.rv_layout.info[2]) + ' PLN'
+        Button:
+            size_hint_y: None
+            height: root.height*0.1
+            text: 'OK'
+            on_press:
+                root.dismiss()
+
+<SelectableButton>:
+    # Draw a background to indicate selection
+    size_hint_x: None
+    width: root.width
+
+<ProductScreen>
+    rv: rv
+    query: query
+    selection: selection
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            size_hint_y: None
+            height: root.height*0.1
+            bold: True
+            text: 'Lista produktow'
+        BoxLayout:
+            orientation:'horizontal'
+            size_hint: None, None
+            height: root.height*0.07
+            width: root.width*0.25
+            Button:
+                size_hint: None, None
+                height: root.height*0.07
+                width: root.width*0.25
+                text: 'szukaj'
+                on_press: root.refresh()
+            TextInput:
+                id: query
+                size_hint: None, None
+                height: root.height*0.07
+                width: root.width*0.5
+                halign: 'center'
+                valign: 'center'
+                multiline:False
+            Spinner:
+                id: selection
+                text: 'ALL'
+                values: 'ID','nazwa','opis','ALL'
+                size_hint: None, None
+                height: root.height*0.07
+                width: root.width*0.25
+        Label:
+            size_hint_y: None
+            height: root.height*0.075
+        RecycleView:
+            id: rv
+            rv_layout: layout
+            viewclass: 'SelectableButton'
+            SelectableRecycleBoxLayout:
+                id: layout
+                default_size: root.width, dp(56)
+                default_size_hint: None, None
+                size_hint_y: None
+                width: app.root.width
+                height: self.minimum_height
+                orientation: "vertical"
+        Button:
+            text: "Back"
+            size_hint_y: None
+            height: root.height*0.1
+            on_press: root.manager.current= 'menu'
